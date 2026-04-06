@@ -12,17 +12,29 @@ Page({
     imageWidth: 0,
     imageHeight: 0,
     granularity: 50,
+    displayGranularity: 50, // 实时显示的格数（拖动时更新）
     pixelationMode: 'dominant',
     generating: false,
+    countdown: 0, // 问题1：倒计时
     gridData: null,
     colorList: [],
     totalCount: 0,
     canvasWidth: 300,
     canvasHeight: 300,
+    scaledCanvasWidth: 300,
+    scaledCanvasHeight: 300,
     statusText: '',
+    // 问题4：图纸导出
+    exportGrid: null,
+    exportN: 0,
+    exportM: 0,
+    exportColorList: [],
+    exportTotal: 0,
+    exportSystem: 'MARD',
   },
 
   _timer: null,
+  _countdownTimer: null,
 
   onLoad() {
     const saved = wx.getStorageSync('selectedColorSystem');
@@ -150,7 +162,13 @@ Page({
     });
   },
 
-  onGranularityChange(e) { this.setData({ granularity: e.detail.value }); },
+  // 问题2：拖动中实时更新格数
+  onGranularityChanging(e) {
+    this.setData({ displayGranularity: e.detail.value });
+  },
+  onGranularityChange(e) {
+    this.setData({ granularity: e.detail.value, displayGranularity: e.detail.value });
+  },
   onModeChange(e) { this.setData({ pixelationMode: e.detail.value }); },
 
   // ---- 生成 ----
@@ -187,16 +205,31 @@ Page({
           success: imgData => {
             // 像素化
             const result = this._pixelate(imgData, W, H, N, M, currentSystem, pixelationMode);
+            // 问题3：canvas 尺寸限制最大 600px，等比缩放
+            const rawW = N * 6, rawH = M * 6;
+            const maxSize = 600;
+            const scale = Math.min(1, maxSize / Math.max(rawW, rawH));
+            clearInterval(this._countdownTimer);
             this.setData({
               gridData: result.grid,
               colorList: result.list,
               totalCount: result.total,
-              canvasWidth: N * 6,
-              canvasHeight: M * 6,
+              canvasWidth: Math.round(rawW * scale),
+              canvasHeight: Math.round(rawH * scale),
+              scaledCanvasWidth: rawW,
+              scaledCanvasHeight: rawH,
               generating: false,
+              countdown: 0,
               statusText: '',
+              // 问题4：保存时用的原始数据
+              exportGrid: result.grid,
+              exportN: N,
+              exportM: M,
+              exportColorList: result.list,
+              exportTotal: result.total,
+              exportSystem: currentSystem,
             });
-            this._drawGrid(result.grid, N, M);
+            this._drawGrid(result.grid, N, M, scale);
           },
           fail: err => {
             console.error('canvasGetImageData 失败:', err);
@@ -207,18 +240,34 @@ Page({
       }, 500); // 等待足够时间让 draw 完成
     });
 
-    // 20秒超时
+    // 问题1：30秒超时 + 倒计时
+    let remaining = 30;
+    this.setData({ countdown: remaining, statusText: `处理中 ${N}×${M}，剩余 ${remaining}s...` });
+    if (this._countdownTimer) clearInterval(this._countdownTimer);
+    this._countdownTimer = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(this._countdownTimer);
+        return;
+      }
+      this.setData({ countdown: remaining, statusText: `处理中 ${N}×${M}，剩余 ${remaining}s...` });
+    }, 1000);
     if (this._timer) clearTimeout(this._timer);
     this._timer = setTimeout(() => {
-      this.setData({ generating: false, statusText: '处理超时' });
+      clearInterval(this._countdownTimer);
+      this.setData({ generating: false, countdown: 0, statusText: '处理超时' });
       wx.showToast({ title: '处理超时，请换一张图片', icon: 'none' });
-    }, 20000);
+    }, 30000);
   },
 
   // ---- 绘制网格到 canvas ----
-  _drawGrid(grid, N, M) {
+  // 问题3：支持 scale 缩放，scale=1 时保持真实 6px/格
+  _drawGrid(grid, N, M, scale = 1) {
     const cell = 6;
+    const W = Math.round(N * cell * scale);
+    const H = Math.round(M * cell * scale);
     const ctx = wx.createCanvasContext('gridCanvas');
+    ctx.scale(scale, scale);
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, N*cell, M*cell);
     ctx.strokeStyle = '#DDDDDD'; ctx.lineWidth = 0.3;
@@ -233,6 +282,88 @@ Page({
     ctx.draw(true);
   },
 
+  // ---- 问题4：绘制带表头的导出图纸（真实尺寸，不缩放）----
+  _drawExportCanvas() {
+    const { exportGrid, exportN, exportM, exportColorList, exportTotal, exportSystem, currentSystem } = this.data;
+    if (!exportGrid) return;
+    const cell = 6;
+    const headerH = 60, footerH = Math.min(exportColorList.length * 28 + 40, 400);
+    const W = exportN * cell, H = exportM * cell;
+    const totalH = headerH + H + footerH;
+    const ctx = wx.createCanvasContext('exportCanvas');
+    // 背景
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, W, totalH);
+    // 表头
+    ctx.fillStyle = '#1A1A2E';
+    ctx.fillRect(0, 0, W, headerH);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.fillText(`PinBean 拼豆图纸`, 12, 24);
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText(`规格：${exportN}×${exportM}格 | 比例：${cell}px/格 | 色板：${currentSystem} | 共${exportTotal}颗`, 12, 44);
+    // 网格
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, headerH, W, H);
+    ctx.strokeStyle = '#DDDDDD'; ctx.lineWidth = 0.3;
+    for (let j = 0; j < exportM; j++) {
+      for (let i = 0; i < exportN; i++) {
+        const { color } = exportGrid[j][i];
+        ctx.fillStyle = color;
+        ctx.fillRect(i*cell, headerH + j*cell, cell, cell);
+        ctx.strokeRect(i*cell+0.3, headerH + j*cell+0.3, cell, cell);
+      }
+    }
+    // 颜色统计
+    const fy = headerH + H + 12;
+    ctx.fillStyle = '#1A1A2E';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('颜色对照表', 12, fy);
+    ctx.font = '12px sans-serif';
+    exportColorList.slice(0, 20).forEach((c, idx) => {
+      const y = fy + 20 + idx * 26;
+      ctx.fillStyle = c.hex;
+      ctx.fillRect(12, y - 12, 18, 18);
+      ctx.strokeStyle = '#ccc'; ctx.lineWidth = 0.5;
+      ctx.strokeRect(12, y - 12, 18, 18);
+      ctx.fillStyle = '#333';
+      ctx.fillText(`${c.key}  ${c.hex}  ${c.count}颗`, 36, y + 2);
+    });
+    if (exportColorList.length > 20) {
+      ctx.fillStyle = '#888';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(`... 还有 ${exportColorList.length - 20} 种颜色`, 12, fy + 20 + 20 * 26);
+    }
+    ctx.draw(true);
+  },
+
+  // 问题4：保存带表头表尾的图纸
+  onExportWithLegend() {
+    wx.showLoading({ title: '生成图纸...' });
+    const { exportN, exportM } = this.data;
+    const cell = 6;
+    const headerH = 60, footerH = Math.min(this.data.exportColorList.length * 28 + 40, 400);
+    const W = exportN * cell, H = exportM * cell;
+    this.setData({ exportCanvasW: W, exportCanvasH: headerH + H + footerH }, () => {
+      setTimeout(() => {
+        this._drawExportCanvas();
+        setTimeout(() => {
+          wx.canvasToTempFilePath({
+            canvasId: 'exportCanvas',
+            success: res => wx.saveImageToPhotosAlbum({
+              filePath: res.tempFilePath,
+              success: () => { wx.hideLoading(); wx.showToast({ title: '已保存图纸到相册', icon: 'success' }); },
+              fail: err => { wx.hideLoading(); wx.showToast({ title: '保存失败，请授权', icon: 'none' }); },
+            }),
+            fail: () => { wx.hideLoading(); wx.showToast({ title: '导出失败', icon: 'none' }); },
+          });
+        }, 600);
+      }, 100);
+    });
+  },
+
+  // 原保存按钮改为保存纯图纸（无表头）
   onSaveImage() {
     wx.canvasToTempFilePath({
       canvasId: 'gridCanvas',
@@ -242,6 +373,14 @@ Page({
         fail: () => wx.showToast({ title: '保存失败，请授权', icon: 'none' }),
       }),
     });
+  },
+
+  // 问题4：新按钮：保存带颜色说明的完整图纸
+  onSaveWithLegend() {
+    if (!this.data.exportGrid) {
+      wx.showToast({ title: '先生成图纸', icon: 'none' }); return;
+    }
+    this.onExportWithLegend();
   },
 
   onShare() {

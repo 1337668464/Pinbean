@@ -67,7 +67,7 @@
         <view class="control-row">
           <text class="control-label">
             像素密度
-            <text class="label-value">{{granularity}} 格</text>
+            <text class="label-value">{{displayGranularity}} 格</text>
           </text>
           <slider
             min="10"
@@ -75,6 +75,7 @@
             step="1"
             value="{{granularity}}"
             bindchange="onGranularityChange"
+            bindchanging="onGranularityChanging"
           />
         </view>
       </view>
@@ -98,7 +99,7 @@
 
       <!-- 生成按钮 -->
       <button class="btn-primary" bindtap="onGenerate" loading="{{generating}}">
-        {{generating ? '处理中...' : '生成拼豆图纸'}}
+        {{generating ? ('处理中 ' + (countdown > 0 ? countdown + 's...' : '...')) : '生成拼豆图纸'}}
       </button>
 
     </view>
@@ -107,17 +108,22 @@
     <view wx:if="{{gridData}}" class="result-section">
       <text class="section-title">图纸预览</text>
 
-      <scroll-view scroll-x="true" scroll-y="true" class="canvas-scroll">
+      <view class="canvas-wrapper">
         <canvas
           canvas-id="gridCanvas"
           style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
           class="grid-canvas"
         />
-      </scroll-view>
+      </view>
+      <!-- 问题4：导出用离屏 canvas（隐藏） -->
+      <canvas canvas-id="exportCanvas"
+        style="position:absolute;left:-9999px;top:-9999px;width:{{exportCanvasW}}px;height:{{exportCanvasH}}px;"
+      />
 
       <view class="action-btns">
-        <button class="btn-secondary" bindtap="onSaveImage" size="mini">保存到相册</button>
-        <button class="btn-secondary" bindtap="onShare" size="mini">分享给好友</button>
+        <button class="btn-secondary" bindtap="onSaveImage" size="mini">保存图纸</button>
+        <button class="btn-secondary btn-highlight" bindtap="onSaveWithLegend" size="mini">📋 保存色卡图纸</button>
+        <button class="btn-secondary" bindtap="onShare" size="mini">分享</button>
       </view>
 
       <!-- 颜色统计 -->

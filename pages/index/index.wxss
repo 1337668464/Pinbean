@@ -406,6 +406,17 @@ radio-group {
   background: var(--color-border);
 }
 
+/* 问题4：色卡图纸按钮高亮 */
+.btn-highlight {
+  background: rgba(255, 107, 107, 0.12) !important;
+  color: var(--color-accent) !important;
+  border: 2rpx solid var(--color-accent);
+}
+
+.btn-highlight:active {
+  background: rgba(255, 107, 107, 0.25) !important;
+}
+
 /* ==================== 6. 颜色统计区 ==================== */
 .color-stats {
   margin-top: var(--space-xl);
