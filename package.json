@@ -1,0 +1,19 @@
+{
+  "name": "pinbean-miniapp",
+  "version": "1.0.0",
+  "description": "PinBean 拼豆助手微信小程序",
+  "main": "app.js",
+  "scripts": {
+    "build": "node build.js --compile-only",
+    "preview": "node build.js --preview",
+    "upload": "node build.js --upload",
+    "postinstall": "echo 'miniprogram-ci 已安装，使用 npm run build/preview/upload'",
+    "test": "echo \"no test specified\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "miniprogram-ci": "^2.1.31"
+  }
+}

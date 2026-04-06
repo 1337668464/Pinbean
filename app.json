@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1F2937",
+    "navigationBarTitleText": "PinBean 拼豆助手",
+    "navigationBarTextStyle": "white"
+  },
+  "component2": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

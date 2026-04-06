@@ -1,0 +1,489 @@
+/* ============================================================
+   pages/index/index.wxss — 主页样式
+   PinBean 微信小程序
+   ============================================================ */
+
+/* ==================== 容器 ==================== */
+.container {
+  padding: var(--space-lg);
+  background: var(--color-bg);
+  min-height: 100vh;
+  padding-bottom: calc(var(--space-3xl) + env(safe-area-inset-bottom) + 40rpx);
+}
+
+/* ==================== 标题 ==================== */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+  display: block;
+  letter-spacing: 0.5rpx;
+}
+
+/* ==================== 1. 色板选择区 ==================== */
+.palette-selector {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  border: 1rpx solid var(--color-border-light);
+}
+
+.palette-tabs {
+  display: flex;
+  white-space: nowrap;
+  margin-top: var(--space-sm);
+}
+
+.palette-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx 28rpx;
+  border-radius: var(--radius-full);
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
+  margin-right: var(--space-sm);
+  flex-shrink: 0;
+  transition: var(--transition-base);
+  border: 2rpx solid transparent;
+  font-weight: 500;
+}
+
+.palette-tab.active {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: 600;
+  border-color: var(--color-primary);
+  box-shadow: 0 2rpx 12rpx rgba(26, 26, 46, 0.25);
+  transform: scale(1.02);
+}
+
+/* ==================== 2. 上传区域 ==================== */
+.upload-section {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1rpx solid var(--color-border-light);
+  transition: var(--transition-base);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 440rpx;
+  margin: var(--space-lg);
+  border-radius: var(--radius-lg);
+  border: 3rpx dashed var(--color-border);
+  position: relative;
+  transition: var(--transition-base);
+  overflow: hidden;
+}
+
+/* 背景网格装饰（虚线框内的微妙网格） */
+.upload-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--color-border-light) 1rpx, transparent 1rpx),
+    linear-gradient(90deg, var(--color-border-light) 1rpx, transparent 1rpx);
+  background-size: 40rpx 40rpx;
+  opacity: 0.6;
+}
+
+.upload-placeholder:active {
+  border-color: var(--color-accent);
+  background: rgba(255, 107, 107, 0.03);
+  transform: scale(0.99);
+}
+
+/* 拼豆空状态插画（纯 CSS 绘制） */
+.bead-illustration {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.bead-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 26rpx);
+  grid-template-rows: repeat(4, 26rpx);
+  gap: 5rpx;
+  margin-bottom: var(--space-md);
+}
+
+.bead {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 6rpx;
+  position: relative;
+  box-shadow: inset 0 -3rpx 0 rgba(0,0,0,0.15), 0 1rpx 3rpx rgba(0,0,0,0.1);
+}
+
+/* 每个 bead 不同颜色，模拟拼豆 */
+.bead:nth-child(1)  { background: #FF6B6B; }
+.bead:nth-child(2)  { background: #FFB347; }
+.bead:nth-child(3)  { background: #06D6A0; }
+.bead:nth-child(4)  { background: #4ECDC4; }
+.bead:nth-child(5)  { background: #45B7D1; }
+.bead:nth-child(6)  { background: #96CEB4; }
+.bead:nth-child(7)  { background: #DDA0DD; }
+.bead:nth-child(8)  { background: #FF6B6B; }
+.bead:nth-child(9)  { background: #FFEAA7; }
+.bead:nth-child(10) { background: #74B9FF; }
+.bead:nth-child(11) { background: #FD79A8; }
+.bead:nth-child(12) { background: #A29BFE; }
+.bead:nth-child(13) { background: #55EFC4; }
+.bead:nth-child(14) { background: #FDCB6E; }
+.bead:nth-child(15) { background: #E17055; }
+.bead:nth-child(16) { background: #74B9FF; }
+.bead:nth-child(17) { background: #FF7675; }
+.bead:nth-child(18) { background: #F9CA24; }
+.bead:nth-child(19) { background: #06D6A0; }
+.bead:nth-child(20) { background: #FF6B6B; }
+.bead:nth-child(21) { background: #45B7D1; }
+.bead:nth-child(22) { background: #DDA0DD; }
+.bead:nth-child(23) { background: #96CEB4; }
+.bead:nth-child(24) { background: #FFB347; }
+
+/* 高光点 */
+.bead::after {
+  content: '';
+  position: absolute;
+  top: 3rpx;
+  left: 4rpx;
+  width: 8rpx;
+  height: 5rpx;
+  background: rgba(255,255,255,0.55);
+  border-radius: 50%;
+}
+
+.upload-icon-inner {
+  font-size: 56rpx;
+  color: var(--color-accent);
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: var(--space-xs);
+  position: relative;
+  z-index: 1;
+}
+
+.upload-text {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-hint {
+  font-size: 22rpx;
+  color: var(--color-text-tertiary);
+  margin-top: 4rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.preview-image {
+  width: 100%;
+  height: 440rpx;
+  display: block;
+  border-radius: 0;
+}
+
+/* ==================== 3. 参数控制区 ==================== */
+.controls {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  border: 1rpx solid var(--color-border-light);
+}
+
+/* 控制分组 */
+.control-group {
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.control-group:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.control-row {
+  margin-bottom: var(--space-lg);
+}
+
+.control-row:last-child {
+  margin-bottom: 0;
+}
+
+.control-label {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.control-label .label-value {
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: 28rpx;
+}
+
+/* ------ 滑块样式 ------ */
+slider {
+  width: 100%;
+  margin: 8rpx 0;
+}
+
+/* WXSS 滑块样式 — 轨道 */
+slider .slider-track {
+  background: var(--color-border) !important;
+  height: 6rpx !important;
+  border-radius: 3rpx !important;
+}
+
+/* WXSS 滑块样式 — 已选部分 */
+slider .slider-handler {
+  background: var(--color-accent) !important;
+  border: 4rpx solid #fff !important;
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 107, 0.4) !important;
+}
+
+/* ------ 模式切换按钮 ------ */
+.mode-option {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  border-radius: var(--radius-full);
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
+  margin-right: var(--space-sm);
+  border: 2rpx solid transparent;
+  transition: var(--transition-base);
+  font-weight: 500;
+}
+
+.mode-option.selected {
+  background: rgba(255, 107, 107, 0.12);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* radio 隐藏原生样式（用 view 模拟） */
+/* radio 组的容器 */
+radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* ==================== 4. 主按钮 ==================== */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-xl);
+  font-size: 30rpx;
+  font-weight: 700;
+  padding: 24rpx 0;
+  margin-top: var(--space-xl);
+  width: 100%;
+  letter-spacing: 1rpx;
+  box-shadow: 0 4rpx 20rpx rgba(26, 26, 46, 0.25);
+  transition: var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 渐变光效叠加层 */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 10rpx rgba(26, 26, 46, 0.2);
+}
+
+.btn-primary:active::before {
+  left: 100%;
+}
+
+.btn-primary[loading] {
+  opacity: 0.7;
+  background: var(--color-primary-light);
+}
+
+/* ==================== 5. 结果区域 ==================== */
+.result-section {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1rpx solid var(--color-border-light);
+  animation: fadeIn 0.4s ease both;
+}
+
+.canvas-scroll {
+  width: 100%;
+  overflow: auto;
+  margin: var(--space-md) 0;
+  background: #FAFAFA;
+  border-radius: var(--radius-md);
+  border: 1rpx solid var(--color-border);
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-md) 0;
+  overflow: auto;
+}
+
+.grid-canvas {
+  border: 2rpx solid var(--color-border);
+  display: block;
+  border-radius: 4rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+}
+
+/* ------ 操作按钮组 ------ */
+.action-btns {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.btn-secondary {
+  flex: 1;
+  background: var(--color-border-light);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  font-size: 26rpx;
+  font-weight: 600;
+  padding: 18rpx 0;
+  transition: var(--transition-base);
+  border: none;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+  background: var(--color-border);
+}
+
+/* ==================== 6. 颜色统计区 ==================== */
+.color-stats {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.stats-title {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-weight: 600;
+}
+
+.stats-title::before {
+  content: '🎨';
+  font-size: 24rpx;
+}
+
+.color-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.color-item {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border-radius: var(--radius-full);
+  padding: 8rpx 16rpx;
+  gap: 10rpx;
+  border: 1rpx solid var(--color-border-light);
+  transition: var(--transition-fast);
+}
+
+.color-item:active {
+  background: var(--color-border-light);
+  transform: scale(0.97);
+}
+
+.color-swatch {
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+  box-shadow: inset 0 -2rpx 0 rgba(0,0,0,0.12), 0 1rpx 3rpx rgba(0,0,0,0.1);
+}
+
+.color-key {
+  font-size: 22rpx;
+  color: var(--color-text-primary);
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-weight: 600;
+}
+
+.color-count {
+  font-size: 20rpx;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+/* ==================== 7. 动画 ==================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes beadFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6rpx); }
+}
+
+/* 拼豆插画轻微浮动动画 */
+.bead-grid {
+  animation: beadFloat 3s ease-in-out infinite;
+}

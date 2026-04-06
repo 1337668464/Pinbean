@@ -1,0 +1,22 @@
+{
+  "description": "PinBean 拼豆助手微信小程序",
+  "projectname": "pinbean-miniapp",
+  "appid": "wxb74fed35e2423c74",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.25.0",
+  "ignores": [
+    "build.js"
+  ]
+}

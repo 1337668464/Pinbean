@@ -1,0 +1,118 @@
+/* ============================================================
+   app.wxss — 全局样式 & 设计系统
+   PinBean 微信小程序
+   ============================================================ */
+
+/* ------------ 设计 Tokens (CSS 变量) ------------ */
+page {
+  /* 主题色系 */
+  --color-primary: #1a1a2e;          /* 深海军蓝 - 主色 */
+  --color-primary-light: #2d2d4a;    /* 浅主色 */
+  --color-accent: #FF6B6B;           /* 珊瑚橙 - 强调色 */
+  --color-accent-2: #FF8E8E;         /* 浅珊瑚橙 */
+  --color-accent-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+
+  /* 背景 & 卡片 */
+  --color-bg: #F7F8FC;               /* 全局背景 */
+  --color-card: #FFFFFF;             /* 卡片白 */
+  --color-card-hover: #FAFAFA;       /* 卡片 hover */
+
+  /* 文字 */
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+
+  /* 边框 & 分割线 */
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+
+  /* 间距系统 (4rpx 基准) */
+  --space-xs: 8rpx;
+  --space-sm: 12rpx;
+  --space-md: 16rpx;
+  --space-lg: 20rpx;
+  --space-xl: 24rpx;
+  --space-2xl: 32rpx;
+  --space-3xl: 40rpx;
+
+  /* 圆角系统 */
+  --radius-sm: 8rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-xl: 32rpx;
+  --radius-full: 9999rpx;
+
+  /* 阴影系统 */
+  --shadow-sm: 0 2rpx 8rpx rgba(26, 26, 46, 0.06);
+  --shadow-md: 0 4rpx 16rpx rgba(26, 26, 46, 0.10);
+  --shadow-lg: 0 8rpx 32rpx rgba(26, 26, 46, 0.14);
+  --shadow-accent: 0 4rpx 20rpx rgba(255, 107, 107, 0.35);
+
+  /* 过渡动画 */
+  --transition-fast: all 0.15s ease;
+  --transition-base: all 0.25s ease;
+  --transition-slow: all 0.4s ease;
+
+  /* 字体 */
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: 28rpx;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+/* ------------ 全局重置 ------------ */
+view, text, scroll-view, image, button, input, slider, label, radio {
+  box-sizing: border-box;
+}
+
+/* 统一所有容器的圆角和阴影过渡 */
+container {
+  display: block;
+}
+
+/* ------------ 全局过渡类 ------------ */
+.fade-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ------------ 安全区适配 ------------ */
+page {
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
+}
+
+/* ------------ 通用卡片 ------------ */
+.card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  transition: var(--transition-base);
+}
+
+/* ------------ 渐变文字 ------------ */
+.gradient-text {
+  background: var(--color-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}

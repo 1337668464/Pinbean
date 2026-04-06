@@ -1,0 +1,141 @@
+<!-- pages/index/index.wxml -->
+
+<view class="container">
+
+  <!-- 离屏处理 Canvas（用于 drawImage + getImageData，固定200x200） -->
+  <canvas canvas-id="__process_canvas__" style="position:absolute;left:-9999px;top:-9999px;width:200px;height:200px;" />
+
+  <!-- 顶部色板切换 -->
+  <view class="palette-selector">
+    <text class="section-title">选择色板系统</text>
+    <scroll-view class="palette-tabs" scroll-x="true">
+      <view
+        wx:for="{{colorSystems}}"
+        wx:key="key"
+        class="palette-tab {{currentSystem === item.key ? 'active' : ''}}"
+        bindtap="onSelectColorSystem"
+        data-system="{{item.key}}"
+      >{{item.name}}</view>
+    </scroll-view>
+  </view>
+
+  <!-- 上传区域 -->
+  <view class="upload-section" bindtap="onChooseImage">
+    <view wx:if="{{!hasImage}}" class="upload-placeholder">
+      <!-- 拼豆空状态插画 -->
+      <view class="bead-illustration">
+        <view class="bead-grid">
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+          <view class="bead"></view>
+        </view>
+        <text class="upload-icon-inner">+</text>
+      </view>
+      <text class="upload-text">点击上传图片</text>
+      <text class="upload-hint">支持 JPG / PNG</text>
+    </view>
+    <image wx:else src="{{imagePath}}" mode="aspectFit" class="preview-image" />
+  </view>
+
+  <!-- 参数控制 -->
+  <block wx:if="{{hasImage}}">
+    <view class="controls">
+
+      <!-- 像素密度 -->
+      <view class="control-group">
+        <view class="control-row">
+          <text class="control-label">
+            像素密度
+            <text class="label-value">{{granularity}} 格</text>
+          </text>
+          <slider
+            min="10"
+            max="100"
+            step="1"
+            value="{{granularity}}"
+            bindchange="onGranularityChange"
+          />
+        </view>
+      </view>
+
+      <!-- 处理模式 -->
+      <view class="control-group">
+        <view class="control-row">
+          <text class="control-label">处理模式</text>
+          <radio-group bindchange="onModeChange">
+            <label class="mode-option {{pixelationMode === 'dominant' ? 'selected' : ''}}">
+              <radio value="dominant" checked="{{pixelationMode === 'dominant'}}" />
+              <text>卡通（色块纯净）</text>
+            </label>
+            <label class="mode-option {{pixelationMode === 'average' ? 'selected' : ''}}">
+              <radio value="average" checked="{{pixelationMode === 'average'}}" />
+              <text>真实（过渡自然）</text>
+            </label>
+          </radio-group>
+        </view>
+      </view>
+
+      <!-- 生成按钮 -->
+      <button class="btn-primary" bindtap="onGenerate" loading="{{generating}}">
+        {{generating ? '处理中...' : '生成拼豆图纸'}}
+      </button>
+
+    </view>
+
+    <!-- 生成结果 -->
+    <view wx:if="{{gridData}}" class="result-section">
+      <text class="section-title">图纸预览</text>
+
+      <scroll-view scroll-x="true" scroll-y="true" class="canvas-scroll">
+        <canvas
+          canvas-id="gridCanvas"
+          style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+          class="grid-canvas"
+        />
+      </scroll-view>
+
+      <view class="action-btns">
+        <button class="btn-secondary" bindtap="onSaveImage" size="mini">保存到相册</button>
+        <button class="btn-secondary" bindtap="onShare" size="mini">分享给好友</button>
+      </view>
+
+      <!-- 颜色统计 -->
+      <view wx:if="{{colorList.length > 0}}" class="color-stats">
+        <text class="stats-title">颜色统计（共 {{totalCount}} 颗）</text>
+        <view class="color-list">
+          <view
+            wx:for="{{colorList}}"
+            wx:key="hex"
+            class="color-item"
+          >
+            <view class="color-swatch" style="background:{{item.color}}" />
+            <text class="color-key">{{item.key}}</text>
+            <text class="color-count">{{item.count}}颗</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+</view>
